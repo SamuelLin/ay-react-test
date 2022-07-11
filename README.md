@@ -10,7 +10,7 @@ npm run dev
 # build
 npm run build
 
-#style
+# style
 npm run lint
 npm run format
 ```

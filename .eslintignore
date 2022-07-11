@@ -1,5 +1,5 @@
 node_modules
 .vscode
 dist
-webpack.config.
+webpack.config.js
 README.md
