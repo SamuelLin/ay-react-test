@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import CustomInputNumber from '@/components/CustomInputNumber';
-import RoomAllocation from './components/RoomAllocation';
+import RoomAllocation from '@/components/RoomAllocation';
 
 function App() {
   const [inputValue, setInputValue] = useState(1);
