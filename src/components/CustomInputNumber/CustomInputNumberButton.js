@@ -4,24 +4,27 @@ import useLongPress from '@/utils/useLongPress';
 
 let timer = null;
 
+function clearTimer() {
+  clearInterval(timer);
+  timer = null;
+}
+
 function CustomInputNumberButton({ disabled = false, children, onClick = () => {} }) {
   const btn = useRef(null);
 
   useEffect(() => {
-    if (disabled) {
-      clearInterval(timer);
-    }
+    disabled && clearTimer();
   }, [disabled]);
 
+  useEffect(() => {
+    return () => clearTimer();
+  }, []);
+
   const onLongPress = () => {
-    timer = setInterval(() => {
-      onClick();
-    }, 500);
+    timer = setInterval(() => onClick(), 500);
   };
 
-  const onLongPressEnd = () => {
-    clearInterval(timer);
-  };
+  const onLongPressEnd = () => clearTimer();
 
   const defaultOptions = {
     shouldPreventDefault: true,
