@@ -25,7 +25,7 @@ function App() {
         }}
       />
 
-      {/* <h2>disabled</h2>
+      <h2>disabled</h2>
       <CustomInputNumber name="testInput2" disabled={true} />
 
       <h2>RoomAllocation</h2>
@@ -33,7 +33,7 @@ function App() {
         guest={10}
         room={3}
         onChange={(result) => console.log('RoomAllocation: ', result)}
-      /> */}
+      />
 
       <br />
       <br />
