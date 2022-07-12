@@ -5,8 +5,8 @@ import CustomInputNumberButton from './CustomInputNumberButton';
 import triggerInputChange from '@/utils/triggerInputChange';
 
 function CustomInputNumber({
-  min = 0,
-  max = 0,
+  min = 0, // 並未對傳進來的參數做edge限制，可以擴充
+  max = -1, // 並未對傳進來的參數做edge限制，可以擴充
   step = 1,
   name = '',
   value = 0,
@@ -23,7 +23,7 @@ function CustomInputNumber({
   useEffect(() => {
     // 判斷按鈕 disabled
     setDownDisabled(inputValue - step < min);
-    max !== 0 && setUpperDisabled(inputValue + step > max);
+    max >= 0 && setUpperDisabled(inputValue + step > max);
   }, [inputValue, min, max, step]);
 
   useEffect(() => {
@@ -41,6 +41,11 @@ function CustomInputNumber({
   const handleChange = (e) => {
     if (e.target.value > max) e.target.value = max;
     if (e.target.value < min) e.target.value = min;
+
+    if (/^0/.test(e.target.value)) {
+      e.target.value = e.target.value.replace(/^0/, '');
+    }
+
     setInputValue(+e.target.value);
     onChange(e);
   };

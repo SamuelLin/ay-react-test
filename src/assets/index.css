@@ -93,4 +93,9 @@ input[type=number] {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding-left: 5px;
+}
+
+.text-hint {
+  color: #aaa;
 }

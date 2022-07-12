@@ -1,43 +1,67 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import CustomInputNumber from '@/components/CustomInputNumber';
 
+const initialRoomState = (guest, room) => {
+  const roomState = Array(room)
+    .fill(null)
+    .map(() => {
+      guest--;
+      return {
+        adult: guest >= 0 ? 1 : 0,
+        child: 0
+      };
+    });
+
+  return roomState;
+};
+
 function RoomAllocation({ guest = 0, room = 0, onChange = () => {} }) {
-  const [defaultAllocatNum, setDefaultAllocatNum] = useState(0);
-  const [roomState, setRoomState] = useState(Array(room).fill({ adult: 1, child: 0 }));
-  const allocatNum = useMemo(
-    () => roomState.reduce((acc, room) => acc + room.adult + room.child, 0),
-    [roomState]
-  );
+  const [roomState, setRoomState] = useState(initialRoomState(guest, room));
+  const allocatNum = roomState.reduce((acc, room) => acc + room.adult + room.child, 0);
   const leftGuest = guest - allocatNum;
-  const isDisabled = leftGuest === 0;
+  const isFullAllocated = leftGuest === 0;
+  const isDisabled = guest < room;
 
   useEffect(() => {
-    setDefaultAllocatNum(guest - room);
-  }, []);
+    onChange(roomState);
+  }, [roomState]);
 
   return (
     <div className="room-allocation">
       <h4>
         住客人數: {guest} 人 / {room} 房
       </h4>
-      <div className="room-allocation-hint">
-        <p>尚未分配人數: {leftGuest} 人</p>
-      </div>
+
+      {!isFullAllocated && (
+        <div className="room-allocation-hint">
+          <p>尚未分配人數: {leftGuest} 人</p>
+        </div>
+      )}
+
       {roomState.map((room, index) => (
         <div key={index}>
-          <h4>房間: 1 人</h4>
+          <h4>房間: {room.adult + room.child} 人</h4>
           <div className="room-allocation-list">
-            大人
+            <p>
+              大人
+              <br />
+              <span className="text-hint">年齡20+</span>
+            </p>
+
             <CustomInputNumber
               value={room.adult}
               min={1}
-              max={defaultAllocatNum}
+              max={isFullAllocated ? room.adult : room.adult + leftGuest}
               disabled={isDisabled}
               onChange={(event) => {
                 setRoomState((prevState) => {
-                  const newState = [...prevState];
-                  newState[index].adult = event.target.value;
+                  const newState = prevState.map((room, roomIndex) => {
+                    if (roomIndex === index) {
+                      return { ...room, adult: +event.target.value };
+                    }
+                    return room;
+                  });
                   return newState;
                 });
               }}
@@ -48,8 +72,19 @@ function RoomAllocation({ guest = 0, room = 0, onChange = () => {} }) {
             <CustomInputNumber
               value={room.child}
               min={0}
-              max={defaultAllocatNum}
+              max={isFullAllocated ? room.child : room.child + leftGuest}
               disabled={isDisabled}
+              onChange={(event) => {
+                setRoomState((prevState) => {
+                  const newState = prevState.map((room, roomIndex) => {
+                    if (roomIndex === index) {
+                      return { ...room, child: +event.target.value };
+                    }
+                    return room;
+                  });
+                  return newState;
+                });
+              }}
             />
           </div>
         </div>
